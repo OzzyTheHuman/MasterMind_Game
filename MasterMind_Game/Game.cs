@@ -1,4 +1,5 @@
 ﻿using System.Security.AccessControl;
+using System.Text;
 
 namespace MasterMind_Game;
 
@@ -9,7 +10,7 @@ public class Game
     public int ColorsCount { get; private set; }
 
     private List<string> _secretCode = new List<string>();
-    private static readonly List<string> _allColors = ["red", "yellow", "green", "blue", "magenta", "cyan"];
+    private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c"];
 
     public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6)
     {
@@ -29,9 +30,17 @@ public class Game
             _secretCode.Add(_allColors[x]);
         }
     }
-    
+
     public string GetSecretCodeAsString()
     {
-        return string.Join(", ", _secretCode);
+        string code = "";
+        foreach (var n in _secretCode)
+        {
+            code += "[";
+            code += n;
+            code += "]";
+        }
+        
+        return code;
     }
 }
