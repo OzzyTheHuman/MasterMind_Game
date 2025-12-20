@@ -43,4 +43,26 @@ public class Game
         
         return code;
     }
+
+    public string CheckForAnswers(string answer)
+    {
+        string result = "";
+        for (int i = 0; i < answer.Length; i++)
+        {
+            if (_secretCode[i] == answer[i].ToString())
+            {
+                result += "[+]";
+            }
+            else if(_secretCode.Contains(answer[i].ToString()))
+            {
+                result += "[-]";
+            }
+            else
+            {
+                result += "[ ]";
+            }
+        }
+
+        return result;
+    }
 }
