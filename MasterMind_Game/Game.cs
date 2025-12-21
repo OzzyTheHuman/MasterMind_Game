@@ -30,20 +30,16 @@ public class Game
             _secretCode.Add(_allColors[x]);
         }
     }
-
-    public string GetSecretCodeAsString()
+    
+    public List<string> GetSecretCode()
     {
-        string code = "";
-        foreach (var n in _secretCode)
-        {
-            code += "[";
-            code += n;
-            code += "]";
-        }
-        
-        return code;
+        return _secretCode;
     }
 
+    // TODO: REFACTOR - PARSING TO STRING SHOULD BE IN UI
+    // TODO: REFACTOR - NAME METHOD CHANGE, START WITH "GET"
+    // TODO: REFACTOR - CHANGE ARGUMENT AND RETURN TYPE TO LIST
+    // TODO: CURRENT METHOD FOR CHECKING FOR ANSWERS IS WRONG
     public string CheckForAnswers(string answer)
     {
         string result = "";
