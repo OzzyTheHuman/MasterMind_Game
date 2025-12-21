@@ -49,9 +49,18 @@ class Program
                 ShowSecretCodeAndWait(game);
                 break;
             }
-            
+
             List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
-            AttemptResult attempt = game.GetAttemptFeedback(cleanedGuess);
+            AttemptResult attempt = new AttemptResult();
+            try
+            {
+                attempt = game.GetAttemptFeedback(cleanedGuess);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Console.WriteLine();
+                continue;
+            }
             
             if (attempt.IsVictory)
             {
