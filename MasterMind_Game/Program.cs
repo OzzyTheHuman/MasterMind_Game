@@ -21,7 +21,6 @@ class Program
             
             string input = Console.ReadLine();
             Console.Clear();
-            
             switch (input)
             {
                 case "1":
@@ -43,16 +42,32 @@ class Program
         while (true)
         {
             Console.WriteLine(ParseSecretCodeToString(game.GetSecretCode()));
-            string input = Console.ReadLine();
-            // TODO: FIX System.ArgumentOutOfRangeException WHEN PLAYER ENTERS INPUT THAT IS TOO LONG
-            if (input.ToLower() == "q" || input.ToLower() == "quit")
+            string guess = Console.ReadLine();
+            
+            if (guess.ToLower() == "q" || guess.ToLower() == "quit")
             {
                 Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game.GetSecretCode())}");
                 Console.WriteLine("Press any button to continue ...");
                 Console.ReadKey();
+                Console.Clear();
                 break;
             }
-            Console.WriteLine(game.CheckForAnswers(input));
+            
+            List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
+            AttemptResult attempt = game.GetAttemptFeedback(cleanedGuess);
+            Console.WriteLine();
+            Console.WriteLine($"Accurate answers: {attempt.AccurateAnswer}");
+            Console.WriteLine($"Not accurate answers: {attempt.NotAccurateAnswer}");
+            Console.WriteLine();
+            
+            if (attempt.IsVictory)
+            {
+                Console.WriteLine("Congratulations! You won!");
+                Console.WriteLine();
+                Console.WriteLine("Press any button to continue ...");
+                Console.ReadKey();
+                break;
+            }
         }
     }
 
