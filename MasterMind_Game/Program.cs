@@ -46,10 +46,7 @@ class Program
             string guess = Console.ReadLine();
             if (guess.ToLower() == "q" || guess.ToLower() == "quit")
             {
-                Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game)}");
-                Console.WriteLine();
-                Console.WriteLine("Press any button to continue ...");
-                Console.ReadKey();
+                ShowSecretCodeAndWait(game);
                 break;
             }
             
@@ -59,10 +56,7 @@ class Program
             if (attempt.IsVictory)
             {
                 Console.WriteLine("Congratulations! You won!");
-                Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game)}");
-                Console.WriteLine();
-                Console.WriteLine("Press any button to continue ...");
-                Console.ReadKey();
+                ShowSecretCodeAndWait(game);
                 break;
             }
             
@@ -132,5 +126,13 @@ class Program
         }
 
         Console.WriteLine();
+    }
+
+    static void ShowSecretCodeAndWait(Game game)
+    {
+        Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game)}");
+        Console.WriteLine();
+        Console.WriteLine("Press any button to continue ...");
+        Console.ReadKey();
     }
 }
