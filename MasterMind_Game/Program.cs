@@ -70,9 +70,7 @@ class Program
             }
             
             Console.WriteLine();
-            Console.WriteLine($"Accurate answers: {attempt.AccurateAnswer}");
-            Console.WriteLine($"Not accurate answers: {attempt.NotAccurateAnswer}");
-            Console.WriteLine();
+            ShowAttemptResults(attempt);
         }
     }
 
@@ -143,5 +141,12 @@ class Program
         Console.WriteLine();
         Console.WriteLine("Press any button to continue ...");
         Console.ReadKey();
+    }
+
+    static void ShowAttemptResults(AttemptResult attempt)
+    {
+        Console.WriteLine($"Accurate answers: {attempt.AccurateAnswer}");
+        Console.WriteLine($"Not accurate answers: {attempt.NotAccurateAnswer}");
+        Console.WriteLine();
     }
 }
