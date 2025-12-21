@@ -35,6 +35,11 @@ public class Game
     {
         return _secretCode;
     }
+
+    public List<string> GetAvailableColors()
+    {
+        return _allColors;
+    }
     
     public AttemptResult GetAttemptFeedback(List<string> guess)
     {
