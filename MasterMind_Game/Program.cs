@@ -42,16 +42,14 @@ class Program
         ShowAvailableColors(game);
         while (true)
         {
-            Console.WriteLine(ParseSecretCodeToString(game.GetSecretCode()));
-            
+            Console.WriteLine(ParseSecretCodeToString(game));
             string guess = Console.ReadLine();
-            
             if (guess.ToLower() == "q" || guess.ToLower() == "quit")
             {
-                Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game.GetSecretCode())}");
+                Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game)}");
+                Console.WriteLine();
                 Console.WriteLine("Press any button to continue ...");
                 Console.ReadKey();
-                Console.Clear();
                 break;
             }
             
@@ -61,7 +59,7 @@ class Program
             if (attempt.IsVictory)
             {
                 Console.WriteLine("Congratulations! You won!");
-                Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game.GetSecretCode())}");
+                Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game)}");
                 Console.WriteLine();
                 Console.WriteLine("Press any button to continue ...");
                 Console.ReadKey();
@@ -75,8 +73,9 @@ class Program
         }
     }
 
-    static string ParseSecretCodeToString(List<string> list)
+    static string ParseSecretCodeToString(Game game)
     {
+        List<string> list = game.GetSecretCode();
         string result = "";
         foreach (var n in list)
         {
