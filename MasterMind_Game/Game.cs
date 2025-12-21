@@ -35,30 +35,53 @@ public class Game
     {
         return _secretCode;
     }
-
-    // TODO: REFACTOR - PARSING TO STRING SHOULD BE IN UI
-    // TODO: REFACTOR - NAME METHOD CHANGE, START WITH "GET"
-    // TODO: REFACTOR - CHANGE ARGUMENT AND RETURN TYPE TO LIST
-    // TODO: CURRENT METHOD FOR CHECKING FOR ANSWERS IS WRONG
-    public string CheckForAnswers(string answer)
+    
+    public AttemptResult GetAttemptFeedback(List<string> guess)
     {
-        string result = "";
-        for (int i = 0; i < answer.Length; i++)
+        AttemptResult attempt = new AttemptResult();
+        List<string> secretCodeCopy = _secretCode.ToList();
+        List<string> guessCopy = guess.ToList();
+        
+        for (int i = secretCodeCopy.Count - 1; i >= 0 ; i--)
         {
-            if (_secretCode[i] == answer[i].ToString())
+            if (secretCodeCopy[i] == guessCopy[i])
             {
-                result += "[+]";
-            }
-            else if(_secretCode.Contains(answer[i].ToString()))
-            {
-                result += "[-]";
-            }
-            else
-            {
-                result += "[ ]";
+                attempt.AccurateAnswer++;
+                
+                secretCodeCopy.RemoveAt(i);
+                guessCopy.RemoveAt(i);
             }
         }
+        
+        for (int i = 0; i < secretCodeCopy.Count; i++)
+        {
+            if (secretCodeCopy.Contains(guessCopy[i]))
+            {
+                attempt.NotAccurateAnswer++;
+            }
+        }
+        
+        if (attempt.AccurateAnswer == CodeLength)
+        {
+            attempt.IsVictory = true;
+        }
 
-        return result;
+        return attempt;
     }
+}
+
+// Data Transfer Object
+public class AttemptResult
+{
+    public int AccurateAnswer { get; set; }
+    public int NotAccurateAnswer { get; set; }
+    public bool IsVictory { get; set; }
+    /*
+    public AttemptResult(int accurateAnswer, int notAccurateAnswer, bool isVictory)
+    {
+        AccurateAnswer = accurateAnswer;
+        NotAccurateAnswer = notAccurateAnswer;
+        IsVictory = isVictory;
+    }
+    */
 }
