@@ -3,8 +3,8 @@
 namespace MasterMind_Game;
 class Program
 {
-    // The CLI is bugged in Rider when opening in an external window
-    // To see it properly, scroll up the window and rerun the app
+    // The CLI is bugged in Rider when opening in an external window,
+    // To see it properly, scroll up the window and rerun the app,
     // Visual Studio handles this better
     static void Main(string[] args)
     {
@@ -40,50 +40,46 @@ class Program
 
     static void PlayGame()
     {
-        var game = new Game();
+        Game game = new Game();
+        AttemptResult attempt = new AttemptResult();
+        
         ShowRules(game);
-        for (int i = 1; i <= game.Rounds; i++)
+        while(!game.IsGameOver)
         {
-            // ShowInColor(game.GetSecretCode());
+            //ShowListInColor(game.GetSecretCode());
             Console.WriteLine(">-------------------------------------------------------------------<");
-            Console.Write($"Round: {i} \t\tAvailable colors: ");
+            Console.Write($"Round: {game.CurrentRound} \t\tAvailable colors: ");
             ShowInColor(game.GetAvailableColors());
             
             string guess = Console.ReadLine();
-            if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
-            {
-                ShowSecretCodeAndWait(game);
-                break;
-            }
-
             List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
             ShowInputInColor(cleanedGuess);
-            
-            AttemptResult attempt = new AttemptResult();
             try
             {
                 attempt = game.GetAttemptFeedback(cleanedGuess);
+                Console.WriteLine();
+                ShowAttemptResults(attempt);
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentException)
             {
-                
+                Console.WriteLine($"You need to enter {game.CodeLength} letters");
             }
-            
-            if (attempt.IsVictory)
+
+            if (attempt.IsSurrendered)
+            {
+                Console.WriteLine();
+                ShowSecretCodeAndWait(game);
+            }
+            else if (attempt.IsVictory)
             {
                 Console.WriteLine();
                 Console.WriteLine("Congratulations! You won!");
-                ShowSecretCodeAndWait(game);
-                break;
+                WaitForResponse();
             }
-            
-            Console.WriteLine();
-            ShowAttemptResults(attempt);
-            
-            if (i == game.Rounds)
+            else if (game.IsGameOver)
             {
                 Console.WriteLine();
-                Console.WriteLine("Times out! Sadly you didn't guess the code in time");
+                Console.WriteLine("Time's up! Sadly you didn't guess the code in time");
                 ShowSecretCodeAndWait(game);
             }
         }
@@ -150,14 +146,19 @@ class Program
         Console.WriteLine();
     }
 
-    static void ShowSecretCodeAndWait(Game game)
+    static void WaitForResponse()
     {
-        Console.WriteLine("Correct answer was:");
-        ShowInColor(game.GetSecretCode());
         Console.WriteLine();
         Console.WriteLine("Press any button to continue ...");
         Console.ReadKey();
         Console.Clear();
+    }
+    
+    static void ShowSecretCodeAndWait(Game game)
+    {
+        Console.WriteLine("Correct answer was:");
+        ShowInColor(game.GetSecretCode());
+        WaitForResponse();
     }
 
     static void ShowAttemptResults(AttemptResult attempt)
@@ -170,7 +171,7 @@ class Program
     {
         Console.WriteLine("Rules:");
         Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors,");
-        Console.WriteLine($"- You have {game.Rounds} rounds to do so,");
+        Console.WriteLine($"- You have {game.AllRounds} rounds to do so,");
         Console.WriteLine("- Enter only the first letters of the colors, for example: gggg, cyrm etc.");
         Console.WriteLine("- If you want to give up, type in: \"q\" or \"quit\"");
         Console.WriteLine();
