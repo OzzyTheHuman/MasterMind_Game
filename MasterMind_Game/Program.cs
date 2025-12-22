@@ -65,9 +65,7 @@ class Program
             }
             catch (ArgumentOutOfRangeException)
             {
-                //ISSUE: when exception is thrown, there is no attempt evaluation and no end screen when i == game.Rounds
-                Console.WriteLine();
-                continue;
+                
             }
             
             if (attempt.IsVictory)
