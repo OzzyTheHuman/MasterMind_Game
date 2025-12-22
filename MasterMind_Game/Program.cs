@@ -52,6 +52,13 @@ class Program
             ShowInColor(game.GetAvailableColors());
             
             string guess = Console.ReadLine();
+            if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
+            {
+                game.Surrender();
+                Console.WriteLine();
+                ShowSecretCodeAndWait(game);
+                continue;
+            }
             List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
             ShowInputInColor(cleanedGuess);
             try
@@ -65,7 +72,7 @@ class Program
                 Console.WriteLine($"You need to enter {game.CodeLength} letters");
             }
 
-            if (attempt.IsSurrendered)
+            if (game.IsSurrendered)
             {
                 Console.WriteLine();
                 ShowSecretCodeAndWait(game);
