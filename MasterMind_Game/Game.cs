@@ -47,12 +47,11 @@ public class Game
         List<string> secretCodeCopy = _secretCode.ToList();
         List<string> guessCopy = guess.ToList();
         
-        for (int i = secretCodeCopy.Count - 1; i >= 0 ; i--)
+        for (int i = secretCodeCopy.Count - 1; i >= 0; i--)
         {
             if (secretCodeCopy[i] == guessCopy[i])
             {
                 attempt.AccurateAnswer++;
-                
                 secretCodeCopy.RemoveAt(i);
                 guessCopy.RemoveAt(i);
             }
@@ -63,6 +62,7 @@ public class Game
             if (secretCodeCopy.Contains(guessCopy[i]))
             {
                 attempt.NotAccurateAnswer++;
+                secretCodeCopy.Remove(guessCopy[i]);
             }
         }
         
