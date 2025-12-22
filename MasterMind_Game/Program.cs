@@ -39,10 +39,15 @@ class Program
     static void PlayGame()
     {
         var game = new Game();
+        ShowRules(game);
         ShowAvailableColors(game);
-        while (true)
+        
+        for (int i = 1; i <= game.Rounds; i++)
         {
-            Console.WriteLine(ParseSecretCodeToString(game));
+            //Console.WriteLine(ParseSecretCodeToString(game));
+            Console.WriteLine(">-------------------------------------------------------------------<");
+            Console.WriteLine($"Round: {i}");
+            
             string guess = Console.ReadLine();
             if (guess.ToLower() == "q" || guess.ToLower() == "quit")
             {
@@ -71,6 +76,12 @@ class Program
             
             Console.WriteLine();
             ShowAttemptResults(attempt);
+
+            if (i == game.Rounds)
+            {
+                Console.WriteLine("Times out! Sadly you didn't guess the code in time");
+                ShowSecretCodeAndWait(game);
+            }
         }
     }
 
@@ -147,6 +158,15 @@ class Program
     {
         Console.WriteLine($"Accurate answers: {attempt.AccurateAnswer}");
         Console.WriteLine($"Not accurate answers: {attempt.NotAccurateAnswer}");
+    }
+
+    static void ShowRules(Game game)
+    {
+        Console.WriteLine("Rules:");
+        Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors,");
+        Console.WriteLine($"- You have {game.Rounds} rounds to do so,");
+        Console.WriteLine("- Enter only the first letters of the colors, for example: gggg, cyrm etc.");
+        Console.WriteLine("- If you want to give up, type in: \"q\" or \"quit\"");
         Console.WriteLine();
     }
 }
