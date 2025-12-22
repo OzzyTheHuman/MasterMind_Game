@@ -3,7 +3,9 @@
 namespace MasterMind_Game;
 class Program
 {
-    
+    // The CLI is bugged in Rider when opening in an external window
+    // To see it properly, scroll up the window and rerun the app
+    // Visual Studio handles this better
     static void Main(string[] args)
     {
         bool gameRunning = true;
@@ -15,7 +17,7 @@ class Program
         while (gameRunning)
         {
             Console.Clear();
-            Console.WriteLine("=== Mastermind The Game ===");
+            Console.WriteLine("=== Mastermind The Game ===\n");
             Console.WriteLine("1. New Game");
             Console.WriteLine("2. Quit");
             
@@ -40,13 +42,12 @@ class Program
     {
         var game = new Game();
         ShowRules(game);
-        ShowAvailableColors(game);
-        
         for (int i = 1; i <= game.Rounds; i++)
         {
             // ShowInColor(game.GetSecretCode());
             Console.WriteLine(">-------------------------------------------------------------------<");
-            Console.WriteLine($"Round: {i}");
+            Console.Write($"Round: {i} \t\tAvailable colors: ");
+            ShowInColor(game.GetAvailableColors());
             
             string guess = Console.ReadLine();
             if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
