@@ -49,7 +49,7 @@ class Program
             Console.WriteLine($"Round: {i}");
             
             string guess = Console.ReadLine();
-            if (guess.ToLower() == "q" || guess.ToLower() == "quit")
+            if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
             {
                 ShowSecretCodeAndWait(game);
                 break;
@@ -148,7 +148,7 @@ class Program
 
     static void ShowSecretCodeAndWait(Game game)
     {
-        Console.WriteLine($"Correct answer was : {ParseSecretCodeToString(game)}");
+        Console.WriteLine($"Correct answer was: {ParseSecretCodeToString(game)}");
         Console.WriteLine();
         Console.WriteLine("Press any button to continue ...");
         Console.ReadKey();
