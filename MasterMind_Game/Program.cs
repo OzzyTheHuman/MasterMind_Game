@@ -44,7 +44,7 @@ class Program
         
         for (int i = 1; i <= game.Rounds; i++)
         {
-            //Console.WriteLine(ParseSecretCodeToString(game));
+            // ShowInColor(game.GetSecretCode());
             Console.WriteLine(">-------------------------------------------------------------------<");
             Console.WriteLine($"Round: {i}");
             
@@ -56,6 +56,8 @@ class Program
             }
 
             List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
+            ShowInputInColor(cleanedGuess);
+            
             AttemptResult attempt = new AttemptResult();
             try
             {
@@ -63,12 +65,14 @@ class Program
             }
             catch (ArgumentOutOfRangeException)
             {
+                //ISSUE: when exception is thrown, there is no attempt evaluation and no end screen when i == game.Rounds
                 Console.WriteLine();
                 continue;
             }
             
             if (attempt.IsVictory)
             {
+                Console.WriteLine();
                 Console.WriteLine("Congratulations! You won!");
                 ShowSecretCodeAndWait(game);
                 break;
@@ -76,9 +80,10 @@ class Program
             
             Console.WriteLine();
             ShowAttemptResults(attempt);
-
+            
             if (i == game.Rounds)
             {
+                Console.WriteLine();
                 Console.WriteLine("Times out! Sadly you didn't guess the code in time");
                 ShowSecretCodeAndWait(game);
             }
@@ -148,10 +153,12 @@ class Program
 
     static void ShowSecretCodeAndWait(Game game)
     {
-        Console.WriteLine($"Correct answer was: {ParseSecretCodeToString(game)}");
+        Console.WriteLine("Correct answer was:");
+        ShowInColor(game.GetSecretCode());
         Console.WriteLine();
         Console.WriteLine("Press any button to continue ...");
         Console.ReadKey();
+        Console.Clear();
     }
 
     static void ShowAttemptResults(AttemptResult attempt)
@@ -168,5 +175,58 @@ class Program
         Console.WriteLine("- Enter only the first letters of the colors, for example: gggg, cyrm etc.");
         Console.WriteLine("- If you want to give up, type in: \"q\" or \"quit\"");
         Console.WriteLine();
+    }
+
+    static void ShowInColor(List<string> list)
+    {
+        foreach (string color in list)
+        {
+            switch (color)
+            {
+                case "r":
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("[r]");
+                    Console.ResetColor();
+                    break;
+                case "y":
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("[y]");
+                    Console.ResetColor();
+                    break;
+                case "g":
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("[g]");
+                    Console.ResetColor();
+                    break;
+                case "b":
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write("[b]");
+                    Console.ResetColor();
+                    break;
+                case "m":
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.Write("[m]");
+                    Console.ResetColor();
+                    break;
+                case "c":
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("[c]");
+                    Console.ResetColor();
+                    break;
+                default:
+                    Console.ResetColor();
+                    Console.Write("[" + color + "]");
+                    Console.ResetColor();
+                    break;
+            }
+        }
+
+        Console.WriteLine();
+    }
+
+    static void ShowInputInColor(List<string> guess)
+    {
+        Console.CursorTop--;
+        ShowInColor(guess);
     }
 }
