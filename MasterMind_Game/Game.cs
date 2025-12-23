@@ -11,6 +11,7 @@ public class Game
     public int CurrentRound { get; private set; } = 1;
     public bool IsGameOver { get; private set; }
     public bool IsSurrendered { get; private set; }
+    public bool IsVictory { get; private set; }
     
     private List<string> _secretCode = new List<string>();
     private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c"];
@@ -69,7 +70,7 @@ public class Game
             }
         }
         
-        for (int i = 0; i < secretCodeCopy.Count; i++)
+        for (int i = 0; i < guessCopy.Count; i++)
         {
             if (secretCodeCopy.Contains(guessCopy[i]))
             {
@@ -80,16 +81,17 @@ public class Game
         
         if (attempt.AccurateAnswer == CodeLength)
         {
-            attempt.IsVictory = true;
+            IsVictory = true;
             IsGameOver = true;
         }
-
-        if (CurrentRound == AllRounds)
+        else if (CurrentRound >= AllRounds)
         {
             IsGameOver = true;
         }
-
-        CurrentRound++;
+        else
+        {
+            CurrentRound++;
+        }
         return attempt;
     }
 }
@@ -99,13 +101,4 @@ public class AttemptResult
 {
     public int AccurateAnswer { get; set; }
     public int NotAccurateAnswer { get; set; }
-    public bool IsVictory { get; set; }
-    /*
-    public AttemptResult(int accurateAnswer, int notAccurateAnswer, bool isVictory)
-    {
-        AccurateAnswer = accurateAnswer;
-        NotAccurateAnswer = notAccurateAnswer;
-        IsVictory = isVictory;
-    }
-    */
 }

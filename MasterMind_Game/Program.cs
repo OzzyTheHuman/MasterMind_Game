@@ -59,17 +59,18 @@ class Program
                 ShowSecretCodeAndWait(game);
                 continue;
             }
+            
             List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
-            ShowInputInColor(cleanedGuess);
             try
             {
                 attempt = game.GetAttemptFeedback(cleanedGuess);
+                ShowInputInColor(cleanedGuess);
                 Console.WriteLine();
                 ShowAttemptResults(attempt);
             }
             catch (ArgumentException)
             {
-                Console.WriteLine($"You need to enter {game.CodeLength} letters");
+                Console.WriteLine($"You need to enter {game.CodeLength} valid colors");
             }
 
             if (game.IsSurrendered)
@@ -77,7 +78,7 @@ class Program
                 Console.WriteLine();
                 ShowSecretCodeAndWait(game);
             }
-            else if (attempt.IsVictory)
+            else if (game.IsVictory)
             {
                 Console.WriteLine();
                 Console.WriteLine("Congratulations! You won!");
@@ -222,7 +223,7 @@ class Program
                     break;
                 default:
                     Console.ResetColor();
-                    Console.Write("[" + color + "]");
+                    Console.Write(color);
                     Console.ResetColor();
                     break;
             }
