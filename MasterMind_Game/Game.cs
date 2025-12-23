@@ -1,21 +1,43 @@
 ﻿using System.Security.AccessControl;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MasterMind_Game;
 
 public class Game
 {
+    [JsonInclude]
     public int AllRounds { get; private set; }
-    public int CodeLength { get; private set; }
-    public int ColorsCount { get; private set; }
-    public int CurrentRound { get; private set; } = 1;
-    public bool IsGameOver { get; private set; }
-    public bool IsSurrendered { get; private set; }
-    public bool IsVictory { get; private set; }
-    
-    private List<string> _secretCode = new List<string>();
-    private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c"];
 
+    [JsonInclude]
+    public int CodeLength { get; private set; }
+
+    [JsonInclude]
+    public int ColorsCount { get; private set; }
+
+    [JsonInclude]
+    public int CurrentRound { get; private set; } = 1;
+
+    [JsonInclude]
+    public bool IsGameOver { get; private set; }
+
+    [JsonInclude]
+    public bool IsSurrendered { get; private set; }
+
+    [JsonInclude]
+    public bool IsVictory { get; private set; }
+
+    [JsonInclude]
+    public List<string> SecretCode { get; private set; } = new List<string>();
+
+    [JsonInclude]
+    public List<AttemptResult> History { get; private set; } = new List<AttemptResult>();
+    
+    private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c"];
+    
+    private const string SaveFileName = "savedgamedata.json";
+    
     public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6)
     {
         AllRounds = rounds;
@@ -24,20 +46,26 @@ public class Game
 
         GenerateSecretCode();
     }
+
+    [JsonConstructor]
+    public Game()
+    { }
     
     private void GenerateSecretCode()
     {
+        if (SecretCode.Count > 0 ) return;
+        
         Random rnd = new Random();
         for (int i = 0; i < CodeLength; i++)
         {
             int x = rnd.Next(0, ColorsCount);
-            _secretCode.Add(_allColors[x]);
+            SecretCode.Add(_allColors[x]);
         }
     }
     
     public List<string> GetSecretCode()
     {
-        return _secretCode;
+        return SecretCode;
     }
 
     public List<string> GetAvailableColors()
@@ -50,16 +78,51 @@ public class Game
         IsSurrendered = true;
         IsGameOver = true;
     }
+
+    public static bool HasSavedGame()
+    {
+        if (File.Exists(SaveFileName))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void DeleteSavedGame()
+    {
+        if (File.Exists(SaveFileName))
+        {
+            File.Delete(SaveFileName);
+        }
+    }
+    
+    public void SaveGame()
+    {
+        string jsonString = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(SaveFileName, jsonString);
+    }
+
+    public static Game LoadGame()
+    {
+        if (!HasSavedGame()) 
+            return null;
+
+        string jsonString = File.ReadAllText(SaveFileName);
+        Game savedGame = JsonSerializer.Deserialize<Game>(jsonString);
+        return savedGame;
+    }
     
     public AttemptResult GetAttemptFeedback(List<string> guess)
     {
-        AttemptResult attempt = new AttemptResult();
-
         if (guess.Count != CodeLength)
             throw new ArgumentException();
         
-        List<string> secretCodeCopy = _secretCode.ToList();
+        AttemptResult attempt = new AttemptResult();
+        attempt.GuessedColors = new List<string>(guess);
+        List<string> secretCodeCopy = SecretCode.ToList();
         List<string> guessCopy = guess.ToList();
+        
         for (int i = secretCodeCopy.Count - 1; i >= 0; i--)
         {
             if (secretCodeCopy[i] == guessCopy[i])
@@ -81,17 +144,23 @@ public class Game
         
         if (attempt.AccurateAnswer == CodeLength)
         {
+            DeleteSavedGame();
             IsVictory = true;
             IsGameOver = true;
+            return attempt;
         }
-        else if (CurrentRound >= AllRounds)
+        
+        if (CurrentRound >= AllRounds)
         {
+            DeleteSavedGame();
             IsGameOver = true;
+            return attempt;
         }
-        else
-        {
-            CurrentRound++;
-        }
+        
+        CurrentRound++;
+        History.Add(attempt);
+        SaveGame();
+        
         return attempt;
     }
 }
@@ -99,6 +168,7 @@ public class Game
 // Data Transfer Object
 public class AttemptResult
 {
+    public List<string> GuessedColors { get; set; } = new List<string>();
     public int AccurateAnswer { get; set; }
     public int NotAccurateAnswer { get; set; }
 }

@@ -5,7 +5,7 @@ class Program
 {
     // The CLI is bugged in Rider when opening in an external window,
     // To see it properly, scroll up the window and rerun the app,
-    // Visual Studio handles this better
+    // Default Windows CMD handles this better
     static void Main(string[] args)
     {
         bool gameRunning = true;
@@ -18,19 +18,34 @@ class Program
         {
             Console.Clear();
             Console.WriteLine("=== Mastermind The Game ===\n");
-            Console.WriteLine("1. New Game");
-            Console.WriteLine("2. Quit");
+            Console.WriteLine("1. New Game (this will delete your saved games!)");
+            Console.WriteLine("2. Continue");
+            Console.WriteLine("3. Quit");
             
             string input = Console.ReadLine();
             Console.Clear();
             switch (input)
             {
                 case "1":
-                    PlayGame();
+                    Game.DeleteSavedGame();
+                    PlayGame(new Game(colorsCount:6));
                     break;
                 case "2":
+                    if (Game.HasSavedGame())
+                    {
+                        Game savedGame = Game.LoadGame();
+                        PlayGame(savedGame);
+                    }
+                    else 
+                    {
+                        Console.WriteLine("You dont have any saved games");
+                        WaitForResponse();
+                    }
+                    break;
+                case "3":
                     gameRunning = false;
                     break;
+                
             }
         }
 
@@ -38,15 +53,15 @@ class Program
         Console.WriteLine("Thanks for playing !");
     }
 
-    static void PlayGame()
+    static void PlayGame(Game game)
     {
-        Game game = new Game();
-        AttemptResult attempt = new AttemptResult();
-        
         ShowRules(game);
+        ShowSavedGame(game);
+        
         while(!game.IsGameOver)
         {
-            //ShowListInColor(game.GetSecretCode());
+            //ShowInColor(game.GetSecretCode());
+
             Console.WriteLine(">-------------------------------------------------------------------<");
             Console.Write($"Round: {game.CurrentRound} \t\tAvailable colors: ");
             ShowInColor(game.GetAvailableColors());
@@ -56,14 +71,15 @@ class Program
             {
                 game.Surrender();
                 Console.WriteLine();
-                ShowSecretCodeAndWait(game);
+                Console.WriteLine("Game progress is saved, you can close the game");
+                WaitForResponse();
                 continue;
             }
             
             List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
             try
             {
-                attempt = game.GetAttemptFeedback(cleanedGuess);
+                AttemptResult attempt = game.GetAttemptFeedback(cleanedGuess);
                 ShowInputInColor(cleanedGuess);
                 Console.WriteLine();
                 ShowAttemptResults(attempt);
@@ -75,8 +91,8 @@ class Program
 
             if (game.IsSurrendered)
             {
-                Console.WriteLine();
-                ShowSecretCodeAndWait(game);
+                Console.WriteLine("Game progress is saved, you can close the game");
+                WaitForResponse();
             }
             else if (game.IsVictory)
             {
@@ -92,68 +108,25 @@ class Program
             }
         }
     }
-
-    static string ParseSecretCodeToString(Game game)
+    
+    static void ShowSavedGame(Game game)
     {
-        List<string> list = game.GetSecretCode();
-        string result = "";
-        foreach (var n in list)
+        if (game.History.Capacity > 0)
         {
-            result += "[" + n + "]";
+            Console.WriteLine(">-------------------------------------------------------------------<");
+            Console.WriteLine("Saved game: ");
+            Console.WriteLine();
         }
 
-        return result;
-    }
-
-    static void ShowAvailableColors(Game game)
-    {
-        List<string> allColors = game.GetAvailableColors();
-        Console.WriteLine("Available colors to choose from:");
-        foreach (string color in allColors)
+        foreach (var oldAttempt in game.History)
         {
-            switch (color)
-            {
-                case "r":
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("r - red");
-                    Console.ResetColor();
-                    break;
-                case "y":
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("y - yellow");
-                    Console.ResetColor();
-                    break;
-                case "g":
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("g - green");
-                    Console.ResetColor();
-                    break;
-                case "b":
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("b - blue");
-                    Console.ResetColor();
-                    break;
-                case "m":
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("m - magneta");
-                    Console.ResetColor();
-                    break;
-                case "c":
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine("c - cyan");
-                    Console.ResetColor();
-                    break;
-                default:
-                    Console.ResetColor();
-                    Console.WriteLine(color);
-                    Console.ResetColor();
-                    break;
-            }
+            Console.WriteLine();
+            ShowInputInColor(oldAttempt.GuessedColors);
+            Console.WriteLine();
+            ShowAttemptResults(oldAttempt);
+            Console.WriteLine();
         }
-
-        Console.WriteLine();
     }
-
     static void WaitForResponse()
     {
         Console.WriteLine();
@@ -181,7 +154,7 @@ class Program
         Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors,");
         Console.WriteLine($"- You have {game.AllRounds} rounds to do so,");
         Console.WriteLine("- Enter only the first letters of the colors, for example: gggg, cyrm etc.");
-        Console.WriteLine("- If you want to give up, type in: \"q\" or \"quit\"");
+        Console.WriteLine("- If you want to save and exit, type in: \"q\" or \"quit\"");
         Console.WriteLine();
     }
 
