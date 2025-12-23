@@ -8,22 +8,18 @@ class Program
     // Default Windows CMD handles this better
     static void Main(string[] args)
     {
+        ClearConsole();
         bool gameRunning = true;
-        
-        Console.Clear();
-        Console.WriteLine("                                                                                                                    ");
-        Console.Clear();
-        
         while (gameRunning)
         {
-            Console.Clear();
+            ClearConsole();
             Console.WriteLine("=== Mastermind The Game ===\n");
             Console.WriteLine("1. New Game (this will delete your saved games!)");
             Console.WriteLine("2. Continue");
             Console.WriteLine("3. Quit");
             
             string input = Console.ReadLine();
-            Console.Clear();
+            ClearConsole();
             switch (input)
             {
                 case "1":
@@ -49,7 +45,7 @@ class Program
             }
         }
 
-        Console.Clear();
+        ClearConsole();
         Console.WriteLine("Thanks for playing !");
     }
 
@@ -108,7 +104,14 @@ class Program
             }
         }
     }
-    
+
+    static void ClearConsole()
+    {
+        Console.Clear();
+        Console.WriteLine("\x1b[2J");
+        Console.WriteLine("\x1b[3J");
+        Console.Clear();
+    }
     static void ShowSavedGame(Game game)
     {
         if (game.History.Capacity > 0)
@@ -132,7 +135,7 @@ class Program
         Console.WriteLine();
         Console.WriteLine("Press any button to continue ...");
         Console.ReadKey();
-        Console.Clear();
+        ClearConsole();
     }
     
     static void ShowSecretCodeAndWait(Game game)
