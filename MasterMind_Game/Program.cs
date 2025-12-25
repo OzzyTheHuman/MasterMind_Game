@@ -9,12 +9,12 @@ class Program
     static void Main(string[] args)
     {
         ClearConsole();
-        bool gameRunning = true;
-        while (gameRunning)
+        bool choosingMainMenuOption = true;
+        while (choosingMainMenuOption)
         {
             ClearConsole();
             Console.WriteLine("=== Mastermind The Game ===\n");
-            Console.WriteLine("1. New Game (this will delete your saved games!)");
+            Console.WriteLine("1. New Game (this will delete your save file!)");
             Console.WriteLine("2. Continue");
             Console.WriteLine("3. Quit");
             
@@ -39,9 +39,8 @@ class Program
                     }
                     break;
                 case "3":
-                    gameRunning = false;
+                    choosingMainMenuOption = false;
                     break;
-                
             }
         }
 
@@ -56,11 +55,11 @@ class Program
         
         while(!game.IsGameOver)
         {
-            //ShowInColor(game.GetSecretCode());
+            ShowInColor(game.GetSecretCode());
 
             Console.WriteLine(">-------------------------------------------------------------------<");
             Console.Write($"Round: {game.CurrentRound} \t\tAvailable colors: ");
-            ShowInColor(game.GetAvailableColors());
+            ShowInColor(game.GetAvailableColors(game));
             
             string guess = Console.ReadLine();
             if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
@@ -72,7 +71,9 @@ class Program
                 continue;
             }
             
-            List<string> cleanedGuess = guess.Select(x => x.ToString().Trim().ToLower()).ToList();
+            List<string> cleanedGuess = guess.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                                             .Select(x => x.ToString().Trim().ToLower())
+                                             .ToList();
             try
             {
                 AttemptResult attempt = game.GetAttemptFeedback(cleanedGuess);
@@ -156,7 +157,7 @@ class Program
         Console.WriteLine("Rules:");
         Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors,");
         Console.WriteLine($"- You have {game.AllRounds} rounds to do so,");
-        Console.WriteLine("- Enter only the first letters of the colors, for example: gggg, cyrm etc.");
+        Console.WriteLine("- Separate colors with a single space, for example: \"g g g g\" \"c y r m\" etc.");
         Console.WriteLine("- If you want to save and exit, type in: \"q\" or \"quit\"");
         Console.WriteLine();
     }
@@ -195,6 +196,16 @@ class Program
                 case "c":
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.Write("[c]");
+                    Console.ResetColor();
+                    break;
+                case "w":
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("[w]");
+                    Console.ResetColor();
+                    break;
+                case "dg":
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.Write("[dg]");
                     Console.ResetColor();
                     break;
                 default:

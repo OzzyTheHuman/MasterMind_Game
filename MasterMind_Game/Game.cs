@@ -34,7 +34,7 @@ public class Game
     [JsonInclude]
     public List<AttemptResult> History { get; private set; } = new List<AttemptResult>();
     
-    private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c"];
+    private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c", "w", "dg"];
     
     private const string SaveFileName = "savedgamedata.json";
     
@@ -68,9 +68,14 @@ public class Game
         return SecretCode;
     }
 
-    public List<string> GetAvailableColors()
+    public List<string> GetAvailableColors(Game game)
     {
-        return _allColors;
+        List<string> availableColors = new List<string>();
+        for (int i = 0; i < game.ColorsCount; i++)
+        {
+            availableColors.Add(_allColors[i]);
+        }
+        return availableColors;
     }
 
     public void Surrender()
