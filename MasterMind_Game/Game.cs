@@ -34,15 +34,19 @@ public class Game
     [JsonInclude]
     public List<AttemptResult> History { get; private set; } = new List<AttemptResult>();
     
+    [JsonInclude]
+    public int LiesCount { get; private set; }
+    
     private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c", "w", "dg"];
     
     private const string SaveFileName = "savedgamedata.json";
-    
-    public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6)
+
+    public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6, int liesCount = 0)
     {
         AllRounds = rounds;
         CodeLength = codeLength;
         ColorsCount = colorsCount;
+        LiesCount = liesCount;
 
         GenerateSecretCode();
     }
@@ -146,13 +150,85 @@ public class Game
                 secretCodeCopy.Remove(guessCopy[i]);
             }
         }
-        
+
         if (attempt.AccurateAnswer == CodeLength)
         {
             DeleteSavedGame();
             IsVictory = true;
             IsGameOver = true;
             return attempt;
+        }
+        
+        Random rnd = new Random();
+        if (LiesCount > 0)
+        {
+            if (rnd.Next(0, 3) == 1) // 33%
+            {
+                if (rnd.Next(0, 2) == 1) // Accurate or NotAccurate
+                {
+                    if (rnd.Next(0, 2) == 1) // Accurate-- or Accurate++
+                    {
+                        if (attempt.AccurateAnswer > 0)
+                        {
+                            attempt.AccurateAnswer--;
+                        }
+                        else
+                        {
+                            if (attempt.AccurateAnswer < CodeLength - 1)
+                            {
+                                attempt.AccurateAnswer++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (attempt.AccurateAnswer < CodeLength - 1)
+                        {
+                            attempt.AccurateAnswer++;
+                        }
+                        else
+                        {
+                            if (attempt.AccurateAnswer > 0)
+                            {
+                                attempt.AccurateAnswer--;
+                            }
+                        }
+                    }
+                }
+                else 
+                {
+                    if (rnd.Next(0, 2) == 1) // NotAccurate-- or NotAccurate++
+                    {
+                        if (attempt.NotAccurateAnswer > 0)
+                        {
+                            attempt.NotAccurateAnswer--;
+                        }
+                        else
+                        {
+                            if (attempt.NotAccurateAnswer < CodeLength)
+                            {
+                                attempt.NotAccurateAnswer++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (attempt.NotAccurateAnswer < CodeLength)
+                        {
+                            attempt.NotAccurateAnswer++;
+                        }
+                        else
+                        {
+                            if (attempt.NotAccurateAnswer > 0)
+                            {
+                                attempt.NotAccurateAnswer--;
+                            }
+                        }
+                    }
+                }
+
+                LiesCount--;
+            }
         }
         
         if (CurrentRound >= AllRounds)
