@@ -48,10 +48,12 @@ class Program
                                 break;
                             
                             case "2":
-                                bool configuringGame = true;
+                                ShowCustomGameSettings();
+                                
                                 int colorsCount = 0;
                                 int codeLength = 0;
                                 int roundsCount = 0;
+                                bool configuringGame = true;
                                 while (configuringGame)
                                 {
                                     Console.Write("Colors (default is 6, pick between 6 and 8): ");
@@ -96,6 +98,7 @@ class Program
                                 }
 
                                 ClearConsole();
+                                
                                 PlayGame(new Game(roundsCount, codeLength, colorsCount));
                                 choosingGameVariant = false;
                                 break;
@@ -105,8 +108,8 @@ class Program
                                 break;
                         }
                     }
-
                     break;
+                
                 case "2":
                     if (Game.HasSavedGame())
                     {
@@ -119,6 +122,7 @@ class Program
                         WaitForResponse();
                     }
                     break;
+                
                 case "3":
                     choosingMainMenuOption = false;
                     break;
@@ -136,7 +140,8 @@ class Program
         
         while(!game.IsGameOver)
         {
-            ShowInColor(game.GetSecretCode());
+            // uncomment method below to see generated code before ending the game
+            // ShowInColor(game.GetSecretCode()); 
 
             Console.WriteLine(">-------------------------------------------------------------------<");
             Console.Write($"Round: {game.CurrentRound} \t\tAvailable colors: ");
@@ -155,7 +160,7 @@ class Program
                 continue;
             }
             
-            List<string> cleanedGuess = guess.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            List<string> cleanedGuess = guess.Split([' '], StringSplitOptions.RemoveEmptyEntries)
                                              .Select(x => x.ToString().Trim().ToLower())
                                              .ToList();
             try
@@ -251,6 +256,16 @@ class Program
         Console.WriteLine("- Separate colors with a single space, for example: \"g g g g\" \"c y r m\" etc.");
         Console.WriteLine("- If you want to save and exit, type in: \"q\" or \"quit\"");
         Console.WriteLine();
+    }
+
+    static void ShowCustomGameSettings()
+    {
+        Console.WriteLine("Colors (default is 6, pick between 6 and 8): ");
+        Console.WriteLine("Code length (default is 4): ");
+        Console.WriteLine("Number of rounds (default is 9, pick between 9 and 11): ");
+        Console.CursorTop--;
+        Console.CursorTop--;
+        ClearConsoleOneLine();
     }
 
     static void ShowInColor(List<string> list)
