@@ -251,10 +251,11 @@ class Program
     static void ShowRules(Game game)
     {
         Console.WriteLine("Rules:");
-        Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors,");
-        Console.WriteLine($"- You have {game.AllRounds} rounds to do so,");
+        Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors.");
+        Console.WriteLine($"- You have {game.AllRounds} rounds to do so.");
         Console.WriteLine("- Separate colors with a single space, for example: \"g g g g\" \"c y r m\" etc.");
-        Console.WriteLine("- If you want to save and exit, type in: \"q\" or \"quit\"");
+        Console.WriteLine("- The game automatically saves progress after each guess.");
+        Console.WriteLine("- If you want to quit, type in: \"q\" or \"quit\".");
         Console.WriteLine();
     }
 
