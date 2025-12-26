@@ -36,6 +36,9 @@ public class Game
     
     [JsonInclude]
     public int LiesCount { get; private set; }
+
+    [JsonInclude] 
+    public int InitialLiesCount { get; private set; }
     
     private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c", "w", "dg"];
     
@@ -47,6 +50,7 @@ public class Game
         CodeLength = codeLength;
         ColorsCount = colorsCount;
         LiesCount = liesCount;
+        InitialLiesCount = liesCount;
 
         GenerateSecretCode();
     }

@@ -25,17 +25,19 @@ class Program
                 case "1":
                     Console.WriteLine("=== Select variant ===\n");
                     Console.WriteLine("1. Normal");
-                    Console.WriteLine("   - colors: 6");
-                    Console.WriteLine("   - code length: 4");
-                    Console.WriteLine("   - rounds: 9\n");
-                    Console.WriteLine("2. Custom");
+                    Console.WriteLine("   - Colors: 6");
+                    Console.WriteLine("   - Code length: 4");
+                    Console.WriteLine("   - Rounds: 9\n");
+                    Console.WriteLine("2. Liar Mode");
+                    Console.WriteLine("   - The game will try to trick you by giving you wrong answers");
+                    Console.WriteLine("   - There is 33% that the answer you got is wrong, this can happen twice");
+                    Console.WriteLine("   - Other parameters are the same as in normal mode\n");
+                    Console.WriteLine("3. Custom");
                     Console.WriteLine("   - Configure all options to your liking\n");
-                    Console.WriteLine("3. Go back");
+                    Console.WriteLine("4. Go back");
                     
                     string input2 = Console.ReadLine();
                     ClearConsole();
-                    
-                    Console.WriteLine("=== Custom ===\n");
                     bool choosingGameVariant = true;
                     while (choosingGameVariant)
                     {
@@ -48,11 +50,17 @@ class Program
                                 break;
                             
                             case "2":
+                                PlayGame(new Game(colorsCount: 6, liesCount: 2));
+                                choosingGameVariant = false;
+                                break;
+                            
+                            case "3":
+                                Console.WriteLine("=== Configure your game ===\n");
                                 ShowCustomGameSettings();
-                                
                                 int colorsCount = 0;
                                 int codeLength = 0;
                                 int roundsCount = 0;
+                                int liesCount = 0;
                                 bool configuringGame = true;
                                 while (configuringGame)
                                 {
@@ -84,11 +92,26 @@ class Program
                                 }
                                 while (configuringGame)
                                 {
-                                    Console.Write("Number of rounds (default is 9, pick between 9 and 11): ");
+                                    Console.Write("Number of rounds (default is 9): ");
                                     string roundsInput = Console.ReadLine();
                                     if (int.TryParse(roundsInput, out roundsCount))
                                     {
-                                        if (roundsCount >= 9 && roundsCount <= 11)
+                                        if (roundsCount >= 9)
+                                        {
+                                            break;
+                                        }
+                                    }
+
+                                    ClearConsoleOneLine();
+                                }
+
+                                while (configuringGame)
+                                {
+                                    Console.Write("How many times the game should try to trick you? (0 is disabled): ");
+                                    string liesInput = Console.ReadLine();
+                                    if (int.TryParse(liesInput, out liesCount))
+                                    {
+                                        if (liesCount >= 0)
                                         {
                                             break;
                                         }
@@ -99,11 +122,11 @@ class Program
 
                                 ClearConsole();
                                 
-                                PlayGame(new Game(roundsCount, codeLength, colorsCount));
+                                PlayGame(new Game(roundsCount, codeLength, colorsCount, liesCount));
                                 choosingGameVariant = false;
                                 break;
                             
-                            case "3":
+                            case "4":
                                 choosingGameVariant = false;
                                 break;
                         }
@@ -140,7 +163,7 @@ class Program
         
         while(!game.IsGameOver)
         {
-            // uncomment method below to see generated code before ending the game
+            // CHEAT: uncomment method below to see generated code
             // ShowInColor(game.GetSecretCode()); 
 
             Console.WriteLine(">-------------------------------------------------------------------<");
@@ -251,11 +274,15 @@ class Program
     static void ShowRules(Game game)
     {
         Console.WriteLine("Rules:");
-        Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors.");
-        Console.WriteLine($"- You have {game.AllRounds} rounds to do so.");
+        Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors");
+        Console.WriteLine($"- You have {game.AllRounds} rounds to do so");
         Console.WriteLine("- Separate colors with a single space, for example: \"g g g g\" \"c y r m\" etc.");
-        Console.WriteLine("- The game automatically saves progress after each guess.");
-        Console.WriteLine("- If you want to quit, type in: \"q\" or \"quit\".");
+        Console.WriteLine("- Progress is saved automatically after each valid guess");
+        Console.WriteLine("- If you want to quit, type in: \"q\" or \"quit\"\n");
+        if (game.InitialLiesCount > 0)
+        {
+            Console.WriteLine("- Lying mode is enabled. The game will try to trick you.");
+        }
         Console.WriteLine();
     }
 
@@ -263,7 +290,9 @@ class Program
     {
         Console.WriteLine("Colors (default is 6, pick between 6 and 8): ");
         Console.WriteLine("Code length (default is 4): ");
-        Console.WriteLine("Number of rounds (default is 9, pick between 9 and 11): ");
+        Console.WriteLine("Number of rounds (default is 9): ");
+        Console.WriteLine("How many times the game should try to trick you? (0 is disabled): ");
+        Console.CursorTop--;
         Console.CursorTop--;
         Console.CursorTop--;
         ClearConsoleOneLine();
