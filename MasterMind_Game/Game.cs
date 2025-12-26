@@ -119,7 +119,7 @@ public class Game
 
         string jsonString = File.ReadAllText(SaveFileName);
         Game savedGame = JsonSerializer.Deserialize<Game>(jsonString);
-        return savedGame;
+        return savedGame!;
     }
     
     public AttemptResult GetAttemptFeedback(List<string> guess)
@@ -159,76 +159,9 @@ public class Game
             return attempt;
         }
         
-        Random rnd = new Random();
         if (LiesCount > 0)
         {
-            if (rnd.Next(0, 3) == 1) // 33%
-            {
-                if (rnd.Next(0, 2) == 1) // Accurate or NotAccurate
-                {
-                    if (rnd.Next(0, 2) == 1) // Accurate-- or Accurate++
-                    {
-                        if (attempt.AccurateAnswer > 0)
-                        {
-                            attempt.AccurateAnswer--;
-                        }
-                        else
-                        {
-                            if (attempt.AccurateAnswer < CodeLength - 1)
-                            {
-                                attempt.AccurateAnswer++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (attempt.AccurateAnswer < CodeLength - 1)
-                        {
-                            attempt.AccurateAnswer++;
-                        }
-                        else
-                        {
-                            if (attempt.AccurateAnswer > 0)
-                            {
-                                attempt.AccurateAnswer--;
-                            }
-                        }
-                    }
-                }
-                else 
-                {
-                    if (rnd.Next(0, 2) == 1) // NotAccurate-- or NotAccurate++
-                    {
-                        if (attempt.NotAccurateAnswer > 0)
-                        {
-                            attempt.NotAccurateAnswer--;
-                        }
-                        else
-                        {
-                            if (attempt.NotAccurateAnswer < CodeLength)
-                            {
-                                attempt.NotAccurateAnswer++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (attempt.NotAccurateAnswer < CodeLength)
-                        {
-                            attempt.NotAccurateAnswer++;
-                        }
-                        else
-                        {
-                            if (attempt.NotAccurateAnswer > 0)
-                            {
-                                attempt.NotAccurateAnswer--;
-                            }
-                        }
-                    }
-                }
-
-                LiesCount--;
-            }
+            TryToLie(attempt);
         }
         
         if (CurrentRound >= AllRounds)
@@ -241,10 +174,54 @@ public class Game
         CurrentRound++;
         History.Add(attempt);
         SaveGame();
-        
         return attempt;
+
+        void TryToLie(AttemptResult attempt)
+        {
+            Random rnd = new Random();
+
+            if (rnd.Next(0, 3) != 1) return;
+
+            bool changeAccurateAnswer = rnd.Next(0, 2) == 0;
+            if (changeAccurateAnswer)
+            {
+                if (attempt.AccurateAnswer == 0) attempt.AccurateAnswer++;
+                else if (CodeLength - attempt.AccurateAnswer == 1) attempt.AccurateAnswer--;
+                else
+                {
+                    if (rnd.Next(0, 2) == 0)
+                    {
+                        attempt.AccurateAnswer--;
+                    }
+                    else
+                    {
+                        attempt.AccurateAnswer++;
+                    }
+                }
+            }
+            else
+            {
+                if (attempt.NotAccurateAnswer == 0) attempt.NotAccurateAnswer++;
+                else if (attempt.NotAccurateAnswer == CodeLength) attempt.NotAccurateAnswer--;
+                else
+                {
+                    if (rnd.Next(0, 2) == 0)
+                    {
+                        attempt.NotAccurateAnswer--;
+                    }
+                    else
+                    {
+                        attempt.NotAccurateAnswer++;
+                    }
+                }
+            }
+
+            LiesCount--;
+        }
     }
 }
+
+
 
 // Data Transfer Object
 public class AttemptResult
