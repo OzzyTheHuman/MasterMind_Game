@@ -35,9 +35,13 @@ class Program
                         Console.WriteLine("   - The game will try to trick you by giving you wrong answers");
                         Console.WriteLine("   - There is 33% that the answer you got is wrong, this can happen twice");
                         Console.WriteLine("   - Other parameters are the same as in normal mode\n");
-                        Console.WriteLine("3. Custom");
+                        Console.WriteLine("3. Digits Mode");
+                        Console.WriteLine("   - Use digits [0-9] instead of colors");
+                        Console.WriteLine("   - Code length: 4");
+                        Console.WriteLine("   - Rounds: 12\n");
+                        Console.WriteLine("4. Custom");
                         Console.WriteLine("   - Configure all options to your liking\n");
-                        Console.WriteLine("4. Go back");
+                        Console.WriteLine("5. Go back");
                         
                         string input2 = Console.ReadLine();
                         ClearConsole();
@@ -46,16 +50,22 @@ class Program
                         switch (input2)
                         {
                             case "1":
-                                PlayGame(new Game(colorsCount: 6));
+                                PlayGame(new Game(symbolsCount: 6));
                                 choosingGameVariant = false;
                                 break;
                             
                             case "2":
-                                PlayGame(new Game(colorsCount: 6, liesCount: 2));
+                                PlayGame(new Game(symbolsCount: 6, liesCount: 2));
                                 choosingGameVariant = false;
                                 break;
                             
                             case "3":
+                                PlayGame(new Game(symbolsCount: 10, rounds: 12, useColors: false));
+                                choosingGameVariant = false;
+                                break;
+
+                            // TODO: Add Digits Mode integration 
+                            case "4":
                                 Console.WriteLine("=== Configure your game ===\n");
                                 ShowCustomGameSettings();
                                 int colorsCount = 0;
@@ -127,7 +137,7 @@ class Program
                                 choosingGameVariant = false;
                                 break;
                             
-                            case "4":
+                            case "5":
                                 choosingGameVariant = false;
                                 break;
                         }
@@ -168,8 +178,16 @@ class Program
             // ShowInColor(game.GetSecretCode()); 
 
             Console.WriteLine(">-------------------------------------------------------------------<");
-            Console.Write($"Round: {game.CurrentRound} \t\tAvailable colors: ");
-            ShowInColor(game.GetAvailableColors(game));
+            if (game.IsUsingColors)
+            {
+                Console.Write($"Round: {game.CurrentRound} \t\tAvailable colors: ");
+                ShowEssentialValues(game.GetAvailableEssentialValues());
+            }
+            else
+            {
+                Console.Write($"Round: {game.CurrentRound} \t\tAvailable digits: ");
+                ShowEssentialValues(game.GetAvailableEssentialValues());
+            }
             
             string guess = Console.ReadLine();
             if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
@@ -196,7 +214,15 @@ class Program
             }
             catch (ArgumentException)
             {
-                Console.WriteLine($"You need to enter {game.CodeLength} valid colors");
+                if (game.IsUsingColors)
+                {
+                    Console.WriteLine($"You need to enter {game.CodeLength} valid colors");
+                }
+                else
+                {
+                    Console.WriteLine($"You need to enter {game.CodeLength} valid digits");
+                }
+                
             }
 
             if (game.IsSurrendered)
@@ -245,7 +271,7 @@ class Program
         foreach (var oldAttempt in game.History)
         {
             Console.WriteLine();
-            ShowInputInColor(oldAttempt.GuessedColors);
+            ShowInputInColor(oldAttempt.GuessedValues);
             Console.WriteLine();
             ShowAttemptResults(oldAttempt);
             Console.WriteLine();
@@ -262,7 +288,7 @@ class Program
     static void ShowSecretCodeAndWait(Game game)
     {
         Console.WriteLine("Correct answer was:");
-        ShowInColor(game.GetSecretCode());
+        ShowEssentialValues(game.GetSecretCode());
         WaitForResponse();
     }
 
@@ -275,9 +301,19 @@ class Program
     static void ShowRules(Game game)
     {
         Console.WriteLine("Rules:");
-        Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors");
-        Console.WriteLine($"- You have {game.AllRounds} rounds to do so");
-        Console.WriteLine("- Separate colors with a single space, for example: \"g g g g\" \"c y r m\" etc.");
+        if (game.IsUsingColors)
+        {
+            Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} colors");
+            Console.WriteLine($"- You have {game.AllRounds} rounds to do so");
+            Console.WriteLine("- Separate colors with a single space, for example: \"g g g g\" \"c y r m\" etc.");
+        }
+        else
+        {
+            Console.WriteLine($"- Try to guess the secret code consisting of {game.CodeLength} digits");
+            Console.WriteLine($"- You have {game.AllRounds} rounds to do so");
+            Console.WriteLine("- Separate colors with a single space, for example: \"1 2 3 4\" \"9 0 1 2\" etc.");
+        }
+        
         Console.WriteLine("- Progress is saved automatically after each valid guess");
         Console.WriteLine("- If you want to quit, type in: \"q\" or \"quit\"\n");
         if (game.InitialLiesCount > 0)
@@ -299,11 +335,11 @@ class Program
         ClearConsoleOneLine();
     }
 
-    static void ShowInColor(List<string> list)
+    static void ShowEssentialValues(List<string> list)
     {
-        foreach (string color in list)
+        foreach (string n in list)
         {
-            switch (color)
+            switch (n)
             {
                 case "r":
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -347,7 +383,7 @@ class Program
                     break;
                 default:
                     Console.ResetColor();
-                    Console.Write(color);
+                    Console.Write(n + " ");
                     Console.ResetColor();
                     break;
             }
@@ -359,6 +395,6 @@ class Program
     static void ShowInputInColor(List<string> guess)
     {
         Console.CursorTop--;
-        ShowInColor(guess);
+        ShowEssentialValues(guess);
     }
 }

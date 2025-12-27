@@ -41,7 +41,10 @@ public class Game
     public int InitialLiesCount { get; private set; }
     
     [JsonInclude]
-    public List<string> EssentialValuesSet { get; private set; } 
+    public List<string> EssentialValuesSet { get; private set; }
+    
+    [JsonInclude]
+    public bool IsUsingColors { get; private set; }
         
     public static readonly List<string> Colors = ["r", "y", "g", "b", "m", "c", "w", "dg"];
 
@@ -49,13 +52,14 @@ public class Game
     
     private const string SaveFileName = "savedgamedata.json";
 
-    public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6, int liesCount = 0, bool useColors = true)
+    public Game(int rounds = 9, int codeLength = 4, int symbolsCount = 6, int liesCount = 0, bool useColors = true)
     {
         AllRounds = rounds;
         CodeLength = codeLength;
-        SymbolsCount = colorsCount;
+        SymbolsCount = symbolsCount;
         LiesCount = liesCount;
         InitialLiesCount = liesCount;
+        IsUsingColors = useColors;
         if (useColors)
         {
             EssentialValuesSet = Colors;
