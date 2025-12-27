@@ -89,14 +89,9 @@ public class Game
         return SecretCode;
     }
 
-    public List<string> GetAvailableEssentialValues(Game game)
+    public List<string> GetAvailableEssentialValues()
     {
-        List<string> availableValues = new List<string>();
-        for (int i = 0; i < game.SymbolsCount; i++)
-        {
-            availableValues.Add(EssentialValuesSet[i]);
-        }
-        return availableValues;
+        return EssentialValuesSet.Take(SymbolsCount).ToList();
     }
 
     public void Surrender()
