@@ -23,24 +23,25 @@ class Program
             switch (input)
             {
                 case "1":
-                    Console.WriteLine("=== Select variant ===\n");
-                    Console.WriteLine("1. Normal");
-                    Console.WriteLine("   - Colors: 6");
-                    Console.WriteLine("   - Code length: 4");
-                    Console.WriteLine("   - Rounds: 9\n");
-                    Console.WriteLine("2. Liar Mode");
-                    Console.WriteLine("   - The game will try to trick you by giving you wrong answers");
-                    Console.WriteLine("   - There is 33% that the answer you got is wrong, this can happen twice");
-                    Console.WriteLine("   - Other parameters are the same as in normal mode\n");
-                    Console.WriteLine("3. Custom");
-                    Console.WriteLine("   - Configure all options to your liking\n");
-                    Console.WriteLine("4. Go back");
-                    
-                    string input2 = Console.ReadLine();
-                    ClearConsole();
                     bool choosingGameVariant = true;
                     while (choosingGameVariant)
                     {
+                        Console.WriteLine("=== Select variant ===\n");
+                        Console.WriteLine("1. Normal");
+                        Console.WriteLine("   - Colors: 6");
+                        Console.WriteLine("   - Code length: 4");
+                        Console.WriteLine("   - Rounds: 9\n");
+                        Console.WriteLine("2. Liar Mode");
+                        Console.WriteLine("   - The game will try to trick you by giving you wrong answers");
+                        Console.WriteLine("   - There is 33% that the answer you got is wrong, this can happen twice");
+                        Console.WriteLine("   - Other parameters are the same as in normal mode\n");
+                        Console.WriteLine("3. Custom");
+                        Console.WriteLine("   - Configure all options to your liking\n");
+                        Console.WriteLine("4. Go back");
+                        
+                        string input2 = Console.ReadLine();
+                        ClearConsole();
+                        
                         Game.DeleteSavedGame();
                         switch (input2)
                         {
