@@ -14,7 +14,7 @@ public class Game
     public int CodeLength { get; private set; }
 
     [JsonInclude]
-    public int ColorsCount { get; private set; }
+    public int SymbolsCount { get; private set; }
 
     [JsonInclude]
     public int CurrentRound { get; private set; } = 1;
@@ -40,18 +40,31 @@ public class Game
     [JsonInclude] 
     public int InitialLiesCount { get; private set; }
     
-    private static readonly List<string> _allColors = ["r", "y", "g", "b", "m", "c", "w", "dg"];
+    [JsonInclude]
+    public List<string> EssentialValuesSet { get; private set; } 
+        
+    public static readonly List<string> Colors = ["r", "y", "g", "b", "m", "c", "w", "dg"];
+
+    public static readonly List<string> Numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
     
     private const string SaveFileName = "savedgamedata.json";
 
-    public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6, int liesCount = 0)
+    public Game(int rounds = 9, int codeLength = 4, int colorsCount = 6, int liesCount = 0, bool useColors = true)
     {
         AllRounds = rounds;
         CodeLength = codeLength;
-        ColorsCount = colorsCount;
+        SymbolsCount = colorsCount;
         LiesCount = liesCount;
         InitialLiesCount = liesCount;
-
+        if (useColors)
+        {
+            EssentialValuesSet = Colors;
+        }
+        else
+        {
+            EssentialValuesSet = Numbers;
+        }
+        
         GenerateSecretCode();
     }
 
@@ -66,8 +79,8 @@ public class Game
         Random rnd = new Random();
         for (int i = 0; i < CodeLength; i++)
         {
-            int x = rnd.Next(0, ColorsCount);
-            SecretCode.Add(_allColors[x]);
+            int x = rnd.Next(0, SymbolsCount);
+            SecretCode.Add(EssentialValuesSet[x]);
         }
     }
     
@@ -76,14 +89,14 @@ public class Game
         return SecretCode;
     }
 
-    public List<string> GetAvailableColors(Game game)
+    public List<string> GetAvailableEssentialValues(Game game)
     {
-        List<string> availableColors = new List<string>();
-        for (int i = 0; i < game.ColorsCount; i++)
+        List<string> availableValues = new List<string>();
+        for (int i = 0; i < game.SymbolsCount; i++)
         {
-            availableColors.Add(_allColors[i]);
+            availableValues.Add(EssentialValuesSet[i]);
         }
-        return availableColors;
+        return availableValues;
     }
 
     public void Surrender()
@@ -132,7 +145,7 @@ public class Game
             throw new ArgumentException();
         
         AttemptResult attempt = new AttemptResult();
-        attempt.GuessedColors = new List<string>(guess);
+        attempt.GuessedValues = new List<string>(guess);
         List<string> secretCodeCopy = SecretCode.ToList();
         List<string> guessCopy = guess.ToList();
         
@@ -230,7 +243,7 @@ public class Game
 // Data Transfer Object
 public class AttemptResult
 {
-    public List<string> GuessedColors { get; set; } = new List<string>();
+    public List<string> GuessedValues { get; set; } = new List<string>();
     public int AccurateAnswer { get; set; }
     public int NotAccurateAnswer { get; set; }
 }
