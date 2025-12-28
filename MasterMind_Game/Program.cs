@@ -4,8 +4,11 @@ namespace MasterMind_Game;
 class Program
 {
     // The CLI could be bugged in Rider when opening in an external window,
-    // To see it properly, scroll up the window and rerun the app,
+    // Remember to always scroll up the window to see all content,
     // Default Windows CMD handles this better
+    
+    private static bool _isDevMode = false;
+    
     static void Main(string[] args)
     {
         ClearConsole();
@@ -16,8 +19,10 @@ class Program
             Console.WriteLine("=== Mastermind The Game ===\n");
             Console.WriteLine("1. New Game (this will delete your save file!)");
             Console.WriteLine("2. Continue");
-            Console.WriteLine("3. Quit");
+            Console.WriteLine("3. Quit\n");
+            Console.WriteLine("4. Dev mode - (see generated secret code for debugging purposes): " + (_isDevMode ? "enabled" : "disabled"));
             
+            int i = 0;
             string input = Console.ReadLine();
             ClearConsole();
             switch (input)
@@ -204,6 +209,10 @@ class Program
                 case "3":
                     choosingMainMenuOption = false;
                     break;
+                
+                case "4":
+                    _isDevMode = !_isDevMode; 
+                    continue;
             }
         }
 
@@ -218,8 +227,10 @@ class Program
         
         while(!game.IsGameOver)
         {
-            // CHEAT: uncomment method below to see generated code
-            // ShowInColor(game.GetSecretCode()); 
+            if (_isDevMode)
+            {
+                ShowEssentialValues(game.GetSecretCode());
+            }
 
             Console.WriteLine(">-------------------------------------------------------------------<");
             if (game.IsUsingColors)
