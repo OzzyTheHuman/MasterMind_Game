@@ -4,7 +4,7 @@ namespace MasterMind_Game;
 class Program
 {
     // The CLI could be bugged in Rider when opening in an external window,
-    // Remember to always scroll up the window to see all content,
+    // Remember to always scroll up the window to see all content (sometimes Rider autoscroll to the bottom),
     // Default Windows CMD handles this better
     
     private static bool _isDevMode = false;
@@ -37,9 +37,9 @@ class Program
                         Console.WriteLine("   - Code length: 4");
                         Console.WriteLine("   - Rounds: 9\n");
                         Console.WriteLine("2. Liar Mode");
-                        Console.WriteLine("   - The game will try to trick you by giving you wrong answers");
-                        Console.WriteLine("   - There is 33% that the answer you got is wrong, this can happen twice");
-                        Console.WriteLine("   - Other parameters are the same as in normal mode\n");
+                        Console.WriteLine("   - The game WILL try to trick you");
+                        Console.WriteLine("   - 33% chance of a lie, happens up to 2 times.");
+                        Console.WriteLine("   - Rounds: 11\n");
                         Console.WriteLine("3. Digits Mode");
                         Console.WriteLine("   - Use digits [0-9] instead of colors");
                         Console.WriteLine("   - Code length: 4");
@@ -60,7 +60,7 @@ class Program
                                 break;
                             
                             case "2":
-                                PlayGame(new Game(symbolsCount: 6, liesCount: 2));
+                                PlayGame(new Game(rounds:11 ,symbolsCount: 6, liesCount: 2));
                                 choosingGameVariant = false;
                                 break;
                             
@@ -229,6 +229,7 @@ class Program
         {
             if (_isDevMode)
             {
+                Console.Write("[DEVMODE - SECRET CODE]: ");
                 ShowEssentialValues(game.GetSecretCode());
             }
 
