@@ -160,7 +160,6 @@ class Program
 
                                     ClearConsoleOneLine();
                                 }
-
                                 while (configuringGame)
                                 {
                                     Console.Write("How many times the game should try to trick you? (0 is disabled): ");
@@ -237,7 +236,7 @@ class Program
             string guess = Console.ReadLine();
             if (guess.ToLower().Trim() == "q" || guess.ToLower().Trim() == "quit")
             {
-                game.Surrender();
+                game.Exit();
                 if (game.CurrentRound != 1)
                 {
                     Console.WriteLine();
@@ -270,7 +269,7 @@ class Program
                 
             }
 
-            if (game.IsSurrendered)
+            if (game.IsPaused)
             {
                 Console.WriteLine("Game progress is saved, you can close the game");
                 WaitForResponse();

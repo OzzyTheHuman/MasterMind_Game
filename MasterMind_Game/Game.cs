@@ -23,7 +23,7 @@ public class Game
     public bool IsGameOver { get; private set; }
 
     [JsonInclude]
-    public bool IsSurrendered { get; private set; }
+    public bool IsPaused { get; private set; }
 
     [JsonInclude]
     public bool IsVictory { get; private set; }
@@ -103,9 +103,9 @@ public class Game
         return EssentialValuesSet.Take(SymbolsCount).ToList();
     }
 
-    public void Surrender()
+    public void Exit()
     {
-        IsSurrendered = true;
+        IsPaused = true;
         IsGameOver = true;
     }
 
