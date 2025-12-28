@@ -68,7 +68,12 @@ public class Game
         {
             EssentialValuesSet = Numbers;
         }
-        
+
+        if (SymbolsCount > EssentialValuesSet.Count)
+        {
+            throw new ArgumentException($"You cannot choose {SymbolsCount} elements, because {EssentialValuesSet.Count} is the limit");
+        }
+
         GenerateSecretCode();
     }
 
@@ -236,8 +241,6 @@ public class Game
         }
     }
 }
-
-
 
 // Data Transfer Object
 public class AttemptResult
