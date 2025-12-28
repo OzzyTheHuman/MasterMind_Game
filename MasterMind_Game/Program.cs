@@ -3,7 +3,7 @@
 namespace MasterMind_Game;
 class Program
 {
-    // The CLI is bugged in Rider when opening in an external window,
+    // The CLI could be bugged in Rider when opening in an external window,
     // To see it properly, scroll up the window and rerun the app,
     // Default Windows CMD handles this better
     static void Main(string[] args)
@@ -63,37 +63,82 @@ class Program
                                 PlayGame(new Game(symbolsCount: 10, rounds: 12, useColors: false));
                                 choosingGameVariant = false;
                                 break;
-
-                            // TODO: Add Digits Mode integration 
+                            
                             case "4":
                                 Console.WriteLine("=== Configure your game ===\n");
                                 ShowCustomGameSettings();
-                                int colorsCount = 0;
+                                
+                                int valuesCount = 0;
                                 int codeLength = 0;
                                 int roundsCount = 0;
                                 int liesCount = 0;
+                                bool usingColors = true;
+                                
                                 bool configuringGame = true;
-                                while (configuringGame)
+                                bool choosingEssentialValuesSet = true;
+                                while (choosingEssentialValuesSet)
                                 {
-                                    Console.Write("Colors (default is 6, pick between 6 and 8): ");
-                                    string inputColors = Console.ReadLine();
-                                    if (int.TryParse(inputColors, out colorsCount))
+                                    Console.Write("Do you want to guess colors or digits? (colors - 1, digits - 0): ");
+                                    string inputEssentialValuesSet = Console.ReadLine();
+                                    switch (inputEssentialValuesSet)
                                     {
-                                        if (colorsCount is >= 6 and <= 8)
-                                        {
-                                            break;
-                                        }
-                                    }
+                                        case "1":
+                                            while (configuringGame)
+                                            {
+                                                Console.Write("Colors (default is 6, pick between 6 and 8): ");
+                                                string inputColors = Console.ReadLine();
+                                                if (int.TryParse(inputColors, out valuesCount))
+                                                {
+                                                    if (valuesCount is >= 6 and <= 8)
+                                                    {
+                                                        break;
+                                                    }
+                                                }
 
-                                    ClearConsoleOneLine();
+                                                ClearConsoleOneLine();
+                                            }
+                                            choosingEssentialValuesSet = false;
+                                            break;
+                                        
+                                        case "0":
+                                            usingColors = false;
+                                            while (configuringGame)
+                                            {
+                                                Console.Write("Digits (default is 10 [0-9], pick between 4 and 10): ");
+                                                string inputDigits = Console.ReadLine();
+                                                if (int.TryParse(inputDigits, out valuesCount))
+                                                {
+                                                    if (valuesCount is >= 4 and <= 10)
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+
+                                                ClearConsoleOneLine();
+                                            }
+                                            
+                                            choosingEssentialValuesSet = false;
+                                            break;
+                                        default:
+                                            ClearConsoleOneLine();
+                                            break;
+                                    }
                                 }
+                               
                                 while (configuringGame)
                                 {
-                                    Console.Write($"Code length (default is 4, pick between 4 and {colorsCount}): ");
+                                    if (valuesCount == 4)
+                                    {
+                                        Console.WriteLine("Code length (default is 4, you cannot choose less than 4 and more than number of digits/colors): 4");
+                                        codeLength = 4;
+                                        break;
+                                    }
+                                    
+                                    Console.Write($"Code length (default is 4, pick between 4 and {valuesCount}): ");
                                     string inputCodeLength = Console.ReadLine();
                                     if (int.TryParse(inputCodeLength, out codeLength))
                                     {
-                                        if (codeLength >= 4 && codeLength <= colorsCount)
+                                        if (codeLength >= 4 && codeLength <= valuesCount)
                                         {
                                             break;
                                         }
@@ -133,7 +178,7 @@ class Program
 
                                 ClearConsole();
                                 
-                                PlayGame(new Game(roundsCount, codeLength, colorsCount, liesCount));
+                                PlayGame(new Game(roundsCount, codeLength, valuesCount, liesCount, usingColors));
                                 choosingGameVariant = false;
                                 break;
                             
@@ -325,10 +370,12 @@ class Program
 
     static void ShowCustomGameSettings()
     {
-        Console.WriteLine("Colors (default is 6, pick between 6 and 8): ");
+        Console.WriteLine("Do you want to guess colors or digits? (colors - 1, digits - 0): ");
+        Console.WriteLine("Colors (default is 6): ");
         Console.WriteLine("Code length (default is 4): ");
         Console.WriteLine("Number of rounds (default is 9): ");
         Console.WriteLine("How many times the game should try to trick you? (0 is disabled): ");
+        Console.CursorTop--;
         Console.CursorTop--;
         Console.CursorTop--;
         Console.CursorTop--;
